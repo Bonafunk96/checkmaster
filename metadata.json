@@ -1,0 +1,5 @@
+{
+  "name": "CheckMaster AI",
+  "description": "A sophisticated checklist application with AI-powered task generation, category management, and progress tracking, designed with a sleek desktop-class interface.",
+  "requestFramePermissions": []
+}
