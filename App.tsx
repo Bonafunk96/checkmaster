@@ -63,21 +63,25 @@ const App: React.FC = () => {
   }, [activeListId]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+  const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    if (currentUser?.email?.endsWith("@q4inc.com")) {
       setUser(currentUser);
-      if (currentUser) {
-        // loading data from Firestore
-        const remoteChecklists = await getUserChecklists(currentUser);
 
-        if (remoteChecklists.length > 0) {
-          setChecklists(remoteChecklists);
-          setActiveListId(remoteChecklists[0].id);
-        }
+      const remoteChecklists = await getUserChecklists(currentUser);
+      if (remoteChecklists.length > 0) {
+        setChecklists(remoteChecklists);
+        setActiveListId(remoteChecklists[0].id);
       }
-      setLoadingAuth(false);
-      });
-      return () => unsubscribe();
-    }, []);
+    } else {
+      setUser(null);
+    }
+
+    setLoadingAuth(false);
+  });
+
+  return () => unsubscribe();
+  }, []);
+
 
 
   useEffect(() => {
