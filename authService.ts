@@ -15,21 +15,19 @@ const ALLOWED_DOMAIN = "q4inc.com";
 
 /**
  * Login with Google
- * Adding restriction to only access with @q4inc.com emails
+ * Restricts access to @q4inc.com emails
  */
 export const loginWithGoogle = async (): Promise<User> => {
   try {
-
     await setPersistence(auth, browserLocalPersistence);
 
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
 
-    const email = user.email;
+    const email = user.email ?? "";
 
-    if (!email || !email.endsWith(`@${ALLOWED_DOMAIN}`)) {
-      // If the domain is not valid, log out
-      await signOut(auth);
+    // don't logout if user is invalid, that will cause a null state and will close the pop-up for good
+    if (!email.endsWith(`@${ALLOWED_DOMAIN}`)) {
       throw new Error("INVALID_DOMAIN");
     }
 
@@ -41,7 +39,7 @@ export const loginWithGoogle = async (): Promise<User> => {
 };
 
 /**
- * Logout + local clean up
+ * Logout + local cleanup
  */
 export const logout = async (): Promise<void> => {
   try {
