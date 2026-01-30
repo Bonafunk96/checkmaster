@@ -32,6 +32,5 @@ export const loginWithGoogle = async (): Promise<User> => {
 
 export const logout = async (): Promise<void> => {
   await signOut(auth);
-  localStorage.removeItem("multi_checklist_app_data");
-  localStorage.removeItem("active_checklist_id");
 };
+

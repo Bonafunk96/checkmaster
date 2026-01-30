@@ -3,18 +3,24 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+
+  "homepage": "https://bonafunk96.github.io/checkmaster",
+
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "deploy": "npm run build && gh-pages -d dist",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "preview": "vite preview"
   },
+
   "dependencies": {
     "@google/genai": "^1.37.0",
     "firebase": "^12.8.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },
+
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",

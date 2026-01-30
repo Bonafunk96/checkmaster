@@ -6,7 +6,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
 // import { getUserChecklists, saveUserChecklists } from "./firestoreService";
 // import { getUserChecklists, updateChecklist } from "./firestoreService";
-import { getUserChecklists, updateChecklist, saveUserChecklists } from "./firestoreService";
+// import { getUserChecklists, updateChecklist, saveUserChecklists } from "./firestoreService";
 import { loginWithGoogle, logout } from "./authService";
 import { User } from "firebase/auth";
 
@@ -55,32 +55,25 @@ const App: React.FC = () => {
   }, [activeList.id]);
 
   useEffect(() => {
-    localStorage.setItem('multi_checklist_app_data', JSON.stringify(checklists));
-  }, [checklists, user]);
+    localStorage.setItem(
+      "multi_checklist_app_data",
+      JSON.stringify(checklists)
+    );
+  }, [checklists]);
+
 
   useEffect(() => {
     localStorage.setItem('active_checklist_id', activeListId);
   }, [activeListId]);
 
   useEffect(() => {
-  const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-    if (currentUser?.email?.endsWith("@q4inc.com")) {
-      setUser(currentUser);
-
-      const remoteChecklists = await getUserChecklists(currentUser);
-      if (remoteChecklists.length > 0) {
-        setChecklists(remoteChecklists);
-        setActiveListId(remoteChecklists[0].id);
-      }
-    } else {
-      setUser(null);
-    }
-
+  const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    setUser(currentUser);
     setLoadingAuth(false);
   });
+  return unsubscribe;
+}, []);
 
-  return () => unsubscribe();
-  }, []);
 
 
 
@@ -94,24 +87,21 @@ const App: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  useEffect(() => {
-  if (!user || !activeList) return;
-  if (!activeList.id) return;
-  if (!activeList.name) return;
+//   useEffect(() => {
+//   if (!user || !activeList) return;
+//   if (!activeList.id) return;
+//   if (!activeList.name) return;
 
-  const timeout = setTimeout(() => {
-    updateChecklist(user, activeList.id, {
-      title: activeList.name,
-      tasks: activeList.tasks ?? [],
-      updatedAt: Date.now()
-    });
-  }, 1500);
+//   const timeout = setTimeout(() => {
+//     updateChecklist(user, activeList.id, {
+//       title: activeList.name,
+//       tasks: activeList.tasks ?? [],
+//       updatedAt: Date.now()
+//     });
+//   }, 1500);
 
-  return () => clearTimeout(timeout);
-}, [activeList, user]);
-
-
-
+//   return () => clearTimeout(timeout);
+// }, [activeList, user]);
 
   // Resilience: updateActiveList now targets the ACTUAL displayed list ID
   const updateActiveList = useCallback((updater: (list: Checklist) => Checklist) => {
@@ -180,24 +170,19 @@ const App: React.FC = () => {
     }));
   }, [updateActiveList]);
 
-  const createNewList = async () => {
+  const createNewList = () => {
   const newList: Checklist = {
     id: Math.random().toString(36).substr(2, 9),
     name: `New List ${checklists.length + 1}`,
     tasks: []
   };
 
-  const updatedLists = [...checklists, newList];
-
-  setChecklists(updatedLists);
+  setChecklists(prev => [...prev, newList]);
   setActiveListId(newList.id);
   setIsDropdownOpen(false);
   setIsRenaming(true);
-
-  if (user) {
-    await saveUserChecklists(user.uid, updatedLists);
-  }
 };
+
 
 
 
