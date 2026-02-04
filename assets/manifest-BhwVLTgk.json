@@ -7,7 +7,7 @@
   "scope": "/checkmaster/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#3C81F6",
+  "theme_color": "#BDDBFF",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/1441/1441025.png",
