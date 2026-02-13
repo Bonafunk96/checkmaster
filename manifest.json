@@ -3,10 +3,11 @@
   "name": "CheckMaster Simple",
   "short_name": "Checklist",
   "description": "A minimalist, windowed checklist application.",
-  "start_url": "/",
+  "start_url": "/checkmaster/",
+  "scope": "/checkmaster/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#007AFF",
+  "theme_color": "#BDDBFF",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/1441/1441025.png",

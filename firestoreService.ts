@@ -22,12 +22,17 @@ export const getUserChecklists = async (user: User) => {
 
 /*Save all user checklists (sync local -> Firestore)*/
 export const saveUserChecklists = async (
-  userId: string,
+  user: User,
   checklists: any[]
 ) => {
   for (const checklist of checklists) {
-    const ref = doc(db, "users", userId, "checklists", checklist.id);
-    await setDoc(ref, checklist, { merge: true });
+    const ref = doc(db, "users", user.uid, "checklists", checklist.id);
+    try {
+      await setDoc(ref, checklist, { merge: true });
+    } catch (err: any) {
+      console.error("Firestore write blocked by rules", err);
+      throw err;
+    }
   }
 };
 
@@ -50,15 +55,25 @@ export const updateChecklist = async (
   };
 
   const ref = doc(db, "users", user.uid, "checklists", checklistId);
-  await updateDoc(ref, safeData);
+  try {
+    await updateDoc(ref, safeData);
+  } catch (err: any) {
+    console.error("Firestore write blocked by rules", err);
+    throw err; // apply Firestore rules
+  }
 };
 
 
 /*Delete a checklist*/
 export const deleteChecklist = async (
-  userId: string,
+  user: User,
   checklistId: string
 ) => {
-  const ref = doc(db, "users", userId, "checklists", checklistId);
-  await deleteDoc(ref);
+  const ref = doc(db, "users", user.uid, "checklists", checklistId);
+  try {
+    await deleteDoc(ref);
+  } catch (err: any) {
+    console.error("Firestore delete blocked by rules", err);
+    throw err;
+  }
 };

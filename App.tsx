@@ -222,41 +222,93 @@ const App: React.FC = () => {
   };
 
   const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const MAX_FILE_SIZE = 1024 * 1024; // 1MB
+  const MAX_LISTS = 100;
+  const MAX_TASKS_PER_LIST = 500;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const imported = JSON.parse(event.target?.result as string);
-        
-        if (Array.isArray(imported)) {
-          if (confirm(`Import ${imported.length} lists from backup?`)) {
-            const merged = [...checklists];
-            imported.forEach((list: Checklist) => {
-              if (list.name && Array.isArray(list.tasks)) {
-                list.id = Math.random().toString(36).substr(2, 9);
-                merged.push(list);
-              }
-            });
-            setChecklists(merged);
-            alert("Backup imported successfully.");
-          }
-        } else if (imported.name && Array.isArray(imported.tasks)) {
-          imported.id = Math.random().toString(36).substr(2, 9);
-          setChecklists(prev => [...prev, imported]);
-          setActiveListId(imported.id);
-          alert(`Imported "${imported.name}" successfully.`);
-        } else {
-          throw new Error("Invalid format");
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  if (file.size > MAX_FILE_SIZE) {
+    alert("File too large. Max size is 1MB.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    try {
+      const imported = JSON.parse(event.target?.result as string);
+
+      const isValidTask = (t: any) =>
+        t &&
+        typeof t.id === "string" &&
+        typeof t.text === "string" &&
+        t.text.length <= 500 && // characters
+        typeof t.completed === "boolean";
+
+      const isValidList = (l: any) =>
+        l &&
+        typeof l.name === "string" &&
+        l.name.length <= 200 && // characters
+        Array.isArray(l.tasks) &&
+        l.tasks.length <= MAX_TASKS_PER_LIST &&
+        l.tasks.every(isValidTask);
+
+      // -------------------------------
+      // ARRAY IMPORT (complete backup)
+      // -------------------------------
+      if (Array.isArray(imported)) {
+        if (imported.length > MAX_LISTS) {
+          throw new Error("Too many lists in backup.");
         }
-      } catch (err) {
-        alert("Failed to import. Please ensure the file is a valid JSON exported from this app.");
+
+        if (!imported.every(isValidList)) {
+          throw new Error("Invalid list structure.");
+        }
+
+        if (confirm(`Import ${imported.length} lists from backup?`)) {
+          const merged = [...checklists];
+
+          imported.forEach((list: Checklist) => {
+            const newList = {
+              ...list,
+              id: Math.random().toString(36).substr(2, 9)
+            };
+            merged.push(newList);
+          });
+
+          setChecklists(merged);
+          alert("Backup imported successfully.");
+        }
+
+      // -------------------------------
+      // SINGLE LIST IMPORT
+      // -------------------------------
+      } else if (isValidList(imported)) {
+        const newList = {
+          ...imported,
+          id: Math.random().toString(36).substr(2, 9)
+        };
+
+        setChecklists(prev => [...prev, newList]);
+        setActiveListId(newList.id);
+        alert(`Imported "${newList.name}" successfully.`);
+
+      } else {
+        throw new Error("Invalid format");
       }
-    };
-    reader.readAsText(file);
-    if (fileInputRef.current) fileInputRef.current.value = '';
+    } catch (err) {
+      console.error("Import error:", err);
+      alert(
+        "Failed to import. The file is invalid, too large, or exceeds allowed limits."
+      );
+    }
   };
+
+  reader.readAsText(file);
+  if (fileInputRef.current) fileInputRef.current.value = '';
+};
+
 
   // Auto-resize the new entry textarea
   useEffect(() => {

@@ -1,17 +1,57 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="Content-Security-Policy"
+    content="
+    default-src 'self';
+
+    script-src 'self'
+      'unsafe-inline'
+      'unsafe-eval'
+      https://www.gstatic.com
+      https://www.gstatic.com/firebasejs
+      https://apis.google.com
+      https://accounts.google.com
+      https://cdn.tailwindcss.com;
+
+    connect-src 'self'
+      https://*.googleapis.com
+      https://www.googleapis.com
+      https://identitytoolkit.googleapis.com
+      https://securetoken.googleapis.com
+      https://firestore.googleapis.com;
+
+    img-src 'self' data:
+      https://www.gstatic.com
+      https://www.googleusercontent.com;
+
+    style-src 'self'
+      'unsafe-inline'
+      https://fonts.googleapis.com;
+
+    font-src 'self'
+      https://fonts.gstatic.com;
+
+    frame-src
+      https://accounts.google.com
+      https://apis.google.com
+      https://*.firebaseapp.com
+      https://*.web.app;
+    ">
     <title>Checklist</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ffffff">
+    <link rel="manifest" href="./manifest.json">
+    <!-- <meta name="theme-color" content="#ffffff"> -->
+    <meta name="theme-color" content="#BDDBFF">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* Force full height and width to override any global boilerplate CSS */
-        html, body, #root {
+        html,
+        body,
+        #root {
             margin: 0 !important;
             padding: 0 !important;
             height: 100% !important;
@@ -20,7 +60,7 @@
             overflow: hidden !important;
             background-color: #ffffff !important;
         }
-        
+
         body {
             font-family: 'Inter', sans-serif;
         }
@@ -29,19 +69,22 @@
         .task-list::-webkit-scrollbar {
             width: 6px;
         }
+
         .task-list::-webkit-scrollbar-track {
             background: transparent;
         }
+
         .task-list::-webkit-scrollbar-thumb {
             background: #e2e8f0;
             border-radius: 10px;
         }
+
         .task-list::-webkit-scrollbar-thumb:hover {
             background: #cbd5e1;
         }
     </style>
-<script type="importmap">
-{
+    <script type="importmap">
+        {
   "imports": {
     "@google/genai": "https://esm.sh/@google/genai@^1.37.0",
     "react/": "https://esm.sh/react@^19.2.3/",
@@ -50,10 +93,12 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="./index.css">
 </head>
+
 <body class="antialiased">
     <div id="root"></div>
-<script type="module" src="/index.tsx"></script>
+    <script type="module" src="./index.tsx"></script>
 </body>
+
 </html>

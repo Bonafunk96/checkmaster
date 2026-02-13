@@ -1,11 +1,11 @@
-// import { GoogleGenAI, Type } from "@google/genai";
-
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-// const ai = new GoogleGenAI({ apiKey });
-
+/**
+ * Returns checklist suggestions.
+ * NOTE:
+ * - Gemini is disabled on the client for security reasons.
+ * - This mock will be replaced by a backend-controlled AI service.
+ */
 export async function suggestChecklist(goal: string): Promise<string[]> {
-  // MOCK TEMPORAL – Gemini disabled for MVP
-  console.warn("Gemini disabled: using mock suggestions");
+  console.warn("[AI] Gemini disabled — using static mock data");
 
   return [
     "Review earnings materials",
